@@ -222,7 +222,7 @@ $("searchForm").addEventListener("submit", e => {
   const url = "https://html.duckduckgo.com/html/?q="
     + encodeURIComponent(q);
 
-  $("browser").src = url;
+window.open(url, "_blank", "noopener");
 });
 
 $("openSearch").addEventListener("click", () => {
