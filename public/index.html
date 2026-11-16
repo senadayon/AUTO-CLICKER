@@ -231,126 +231,57 @@ $("elementMode").onclick = () => {
 
 $("pick").onclick = beginPicking;
 
+
 $("pickOverlay").onclick = e => {
   if(!selecting) return;
 
   const x = e.clientX;
   const y = e.clientY;
-  const element = document.elementFromPoint(x,y);
 
-  if(!element || element === $("pickOverlay") ||
-     element === $("pickHint")){
-    return;
-  }
+  // オーバーレイを一時的に隠して、下の要素を取得
+  $("pickOverlay").style.display = "none";
+  $("pickHint").style.display = "none";
 
-  if(element.closest("header,footer") ||
-     element.closest("#pickOverlay,#pickHint")){
-    $("status").textContent = "操作対象にできない場所です。";
+  const element = document.elementFromPoint(x, y);
+
+  // 選択画面を戻す
+  $("pickOverlay").style.display = "block";
+  $("pickHint").style.display = "block";
+
+  if(!element) return;
+
+  if(element.closest("header,footer")) {
+    $("status").textContent = "この場所は選択できません。";
     return;
   }
 
   if(mode === "element"){
-    const button = element.closest("button,[role='button'],input[type='button'],input[type='submit'],a");
+    const button = element.closest(
+      "button,[role='button'],input[type='button'],input[type='submit'],a"
+    );
+
     if(!button){
-      $("status").textContent = "ボタンを選択してください。";
+      $("status").textContent = "ボタンの上をクリックしてね！";
       return;
     }
+
     target = {type:"element",element:button};
     button.classList.add("ac-highlight");
     lastHighlighted = button;
+
     $("targetInfo").textContent =
-      "対象ボタン：" + (button.innerText || button.value || button.tagName).trim().slice(0,60);
-  }else{
+      "対象ボタン：" +
+      (button.innerText || button.value || button.tagName).trim().slice(0,60);
+
+  } else {
     target = {type:"coordinate",x,y};
+
     $("targetInfo").textContent =
       "座標：" + Math.round(x) + ", " + Math.round(y);
   }
 
   cancelPicking();
-  $("status").textContent = "対象を設定しました。";
-};
-
-document.addEventListener("keydown",e => {
-  if(e.key === "Escape" && selecting){
-    cancelPicking();
-    $("status").textContent = "選択をキャンセルしました。";
-  }
-});
-
-function clickTarget(){
-  if(!target) return;
-
-  if(target.type === "element"){
-    if(!target.element.isConnected){
-      stop();
-      $("status").textContent = "選択したボタンがページからなくなりました。";
-      return;
-    }
-
-    target.element.click();
-  }else{
-    const element = document.elementFromPoint(target.x,target.y);
-    if(element){
-      element.click();
-    }
-  }
-}
-
-function stop(){
-  if(timer) clearInterval(timer);
-  timer = null;
-  running = false;
-  $("start").disabled = false;
-  $("stop").disabled = true;
-  if($("status").textContent !== "選択したボタンがページからなくなりました。"){
-    $("status").textContent = "停止しました。";
-  }
-}
-
-$("start").onclick = () => {
-  if(!target){
-    $("status").textContent = "先にクリック対象を選択してください。";
-    return;
-  }
-
-  const interval = Number($("interval").value);
-  const max = Number($("maxClicks").value);
-
-  if(!Number.isInteger(interval) || interval < 100 || interval > 10000 ||
-     !Number.isInteger(max) || max < 0 || max > 1000){
-    alert("間隔または回数を確認してください。");
-    return;
-  }
-
-  clicks = 0;
-  $("counter").textContent = "0";
-  running = true;
-  $("start").disabled = true;
-  $("stop").disabled = false;
-  $("status").textContent = "クリック動作中です。";
-
-  timer = setInterval(() => {
-    if(!running) return;
-
-    clickTarget();
-    if(!running) return;
-
-    clicks++;
-    $("counter").textContent = clicks;
-
-    if(max !== 0 && clicks >= max) stop();
-  },interval);
-};
-
-$("stop").onclick = stop;
-
-$("reset").onclick = () => {
-  stop();
-  cancelPicking();
-  clearTarget();
-  clicks = 0;
-  $("counter").textContent = "0";
-  $("status").textContent = "リセットしました。";
+  $("status").textContent = "対象を設定しました！";
 };
 </script>
 </body>
