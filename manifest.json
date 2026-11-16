@@ -1,0 +1,32 @@
+
+{
+  "manifest_version": 3,
+  "name": "AUTO CLICKER",
+  "version": "1.0.0",
+  "description": "Webサイトで使えるクリック補助ツール",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AUTO CLICKER"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
+}
