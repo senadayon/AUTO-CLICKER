@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUTO CLICKER v4</title>
+<title>AUTO CLICKER v5</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#090711;color:#f5f0ff;font-family:Arial,sans-serif}
@@ -35,81 +35,96 @@ label{display:block;color:#c4b5fd;font-size:13px;margin-bottom:8px}
 .status{padding:12px;background:#211832;border-radius:9px;margin-top:12px}
 .mode{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
 .mode button.active{outline:2px solid #e9d5ff;background:#6d28d9}
-#pickOverlay{position:fixed;inset:0;z-index:99999;display:none;cursor:crosshair;background:#0003}
-#pickHint{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#211832;color:white;padding:12px 18px;border:1px solid #c084fc;border-radius:10px;z-index:100000;display:none}
 .ac-highlight{outline:3px solid #c084fc!important;outline-offset:3px!important}
+#selectionBanner{
+ display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);
+ z-index:999999;background:#211832;color:white;padding:13px 18px;
+ border:1px solid #c084fc;border-radius:10px;width:max-content;
+ max-width:90%;text-align:center;box-shadow:0 0 20px #9333ea
+}
 footer{text-align:center;padding:25px;color:#766b88}
-@media(max-width:600px){.controls{grid-template-columns:1fr}.searchrow{flex-direction:column}iframe{height:400px}main{margin:15px auto}.panel{padding:15px}}
+@media(max-width:600px){
+ .controls{grid-template-columns:1fr}
+ .searchrow{flex-direction:column}
+ iframe{height:400px}
+ main{margin:15px auto}
+ .panel{padding:15px}
+}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="logo">⚡ AUTO CLICKER</div>
-  <span style="color:#a78bfa;font-size:12px">VERSION 4.0</span>
+ <div class="logo">⚡ AUTO CLICKER</div>
+ <span style="color:#a78bfa;font-size:12px">VERSION 5.0</span>
 </header>
 
 <main>
+
 <section class="panel">
-<h2>🔎 BING SEARCH</h2>
-<form id="searchForm" class="searchrow">
-<input id="searchInput" placeholder="検索したい言葉を入力..." required>
-<button type="submit">検索</button>
-</form>
-<div id="searchStatus" class="notice"></div>
-<div id="results" class="results"></div>
+ <h2>🔎 BING SEARCH</h2>
+ <form id="searchForm" class="searchrow">
+  <input id="searchInput" placeholder="検索したい言葉を入力..." required>
+  <button type="submit">検索</button>
+ </form>
+ <div id="searchStatus" class="notice"></div>
+ <div id="results" class="results"></div>
 </section>
 
 <section class="panel">
-<h2>🌐 INTERNAL BROWSER</h2>
-<div class="browserbar">
-<input id="urlInput" placeholder="https://example.com">
-<button id="goButton">開く</button>
-</div>
-<iframe id="browser" title="AUTO CLICKER browser"
-src="about:blank" referrerpolicy="no-referrer"></iframe>
-<p class="notice">
-iframe表示を許可しているサイトを開けます。
-外部サイトの内部はブラウザの安全制限により操作できません。
-</p>
+ <h2>🌐 INTERNAL BROWSER</h2>
+ <div class="browserbar">
+  <input id="urlInput" placeholder="https://example.com">
+  <button id="goButton">開く</button>
+ </div>
+ <iframe id="browser" title="AUTO CLICKER browser"
+  src="about:blank" referrerpolicy="no-referrer"></iframe>
+ <p class="notice">
+  iframe表示を許可しているサイトを開けます。
+  外部サイトの内部はブラウザの安全制限により操作できません。
+ </p>
 </section>
 
 <section class="panel">
-<h2>⚡ AUTO CLICKER</h2>
+ <h2>⚡ AUTO CLICKER</h2>
 
-<label>選択方式</label>
-<div class="mode">
-<button id="coordinateMode" class="active">🎯 座標で選択</button>
-<button id="elementMode">🔘 ボタンを直接選択</button>
-</div>
+ <label>選択方式</label>
+ <div class="mode">
+  <button id="coordinateMode" class="active">🎯 座標で選択</button>
+  <button id="elementMode">🔘 ボタンを直接選択</button>
+ </div>
 
-<div class="controls">
-<div>
-<label>クリック間隔（ms）</label>
-<input id="interval" type="number" min="100" max="10000" value="500">
-</div>
-<div>
-<label>クリック回数（0 = 無制限）</label>
-<input id="maxClicks" type="number" min="0" max="1000" value="20">
-</div>
-</div>
+ <div class="controls">
+  <div>
+   <label>クリック間隔（ms）</label>
+   <input id="interval" type="number" min="100" max="10000" value="500">
+  </div>
+  <div>
+   <label>クリック回数（0 = 無制限）</label>
+   <input id="maxClicks" type="number" min="0" max="1000" value="20">
+  </div>
+ </div>
 
-<div class="counter" id="counter">0</div>
-<div class="notice">TOTAL CLICKS</div>
-<div id="targetInfo" class="notice">対象：未選択</div>
+ <div class="counter" id="counter">0</div>
+ <div class="notice">TOTAL CLICKS</div>
+ <div id="targetInfo" class="notice">対象：未選択</div>
 
-<div class="actions">
-<button id="pick">🎯 位置を選択</button>
-<button id="start">▶ START</button>
-<button id="stop" class="red" disabled>■ STOP</button>
-<button id="reset" class="gray">↻ RESET</button>
-</div>
+ <div class="actions">
+  <button id="pick">🎯 位置を選択</button>
+  <button id="start">▶ START</button>
+  <button id="stop" class="red" disabled>■ STOP</button>
+  <button id="reset" class="gray">↻ RESET</button>
+  <button id="cancelPick" class="gray">キャンセル</button>
+ </div>
 
-<div id="status" class="status notice">選択方式を選んで対象を指定してください。</div>
+ <div id="status" class="status notice">対象を選択してください。</div>
 </section>
+
 </main>
 
-<div id="pickOverlay"></div>
-<div id="pickHint">対象をクリックして選択してください（キャンセル：Esc）</div>
+<div id="selectionBanner">
+ 🎯 ページ内の対象をクリックしてください。Escでキャンセル
+</div>
 
 <footer>AUTO CLICKER © 2026</footer>
 
@@ -125,164 +140,267 @@ let clicks = 0;
 let selecting = false;
 let lastHighlighted = null;
 
-function openWebsite(value){
-  try{
-    const url = new URL(value);
-    if(!["http:","https:"].includes(url.protocol)) throw Error();
-    $("urlInput").value = url.href;
-    browser.src = url.href;
-    $("status").textContent = "サイトを開いています。";
-    clearTarget();
-  }catch{
-    alert("正しいURLを入力してください");
-  }
+function setStatus(message){
+ $("status").textContent = message;
 }
 
-$("goButton").onclick = () => openWebsite($("urlInput").value.trim());
-$("urlInput").onkeydown = e => {
-  if(e.key === "Enter") openWebsite($("urlInput").value.trim());
-};
-
-$("searchForm").onsubmit = async e => {
-  e.preventDefault();
-  const q = $("searchInput").value.trim();
-  if(!q) return;
-
-  $("searchStatus").textContent = "Bingで検索中...";
-  $("results").replaceChildren();
-
-  try{
-    const response = await fetch("/api/search?q=" + encodeURIComponent(q));
-    const data = await response.json();
-    if(!response.ok) throw Error(data.error || "検索できませんでした");
-
-    $("searchStatus").textContent = data.results.length + "件の検索結果";
-
-    data.results.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "result";
-
-      const link = document.createElement("a");
-      link.href = "#";
-      link.textContent = item.title || item.url;
-      link.onclick = e => {
-        e.preventDefault();
-        openWebsite(item.url);
-      };
-
-      const desc = document.createElement("p");
-      desc.textContent = item.description || "";
-
-      const address = document.createElement("p");
-      address.textContent = item.url;
-
-      card.append(link,desc,address);
-      $("results").appendChild(card);
-    });
-  }catch(error){
-    $("searchStatus").textContent = error.message;
-  }
-};
-
 function clearTarget(){
-  if(lastHighlighted){
-    lastHighlighted.classList.remove("ac-highlight");
-    lastHighlighted = null;
-  }
-  target = null;
-  $("targetInfo").textContent = "対象：未選択";
+ if(lastHighlighted){
+  lastHighlighted.classList.remove("ac-highlight");
+  lastHighlighted = null;
+ }
+ target = null;
+ $("targetInfo").textContent = "対象：未選択";
 }
 
 function cancelPicking(){
-  selecting = false;
-  $("pickOverlay").style.display = "none";
-  $("pickHint").style.display = "none";
+ selecting = false;
+ $("selectionBanner").style.display = "none";
 }
 
-function beginPicking(){
-  if(running) return;
-
-  selecting = true;
-  $("pickOverlay").style.display = "block";
-  $("pickHint").style.display = "block";
-
-  $("status").textContent = mode === "coordinate"
-    ? "AUTO CLICKER自身のページ内の位置をクリックしてください。"
-    : "AUTO CLICKER自身のページ内のボタンをクリックしてください。";
+function openWebsite(value){
+ try{
+  const url = new URL(value);
+  if(!["http:","https:"].includes(url.protocol)) throw Error();
+  $("urlInput").value = url.href;
+  browser.src = url.href;
+  clearTarget();
+  cancelPicking();
+  setStatus("サイトを開いています。");
+ }catch{
+  alert("正しいURLを入力してください");
+ }
 }
+
+$("goButton").onclick = () => openWebsite($("urlInput").value.trim());
+
+$("urlInput").onkeydown = e => {
+ if(e.key === "Enter") openWebsite($("urlInput").value.trim());
+};
+
+$("searchForm").onsubmit = async e => {
+ e.preventDefault();
+
+ const q = $("searchInput").value.trim();
+ if(!q) return;
+
+ $("searchStatus").textContent = "Bingで検索中...";
+ $("results").replaceChildren();
+
+ try{
+  const response = await fetch("/api/search?q=" + encodeURIComponent(q));
+  const data = await response.json();
+
+  if(!response.ok) throw Error(data.error || "検索できませんでした");
+
+  $("searchStatus").textContent = data.results.length + "件の検索結果";
+
+  data.results.forEach(item => {
+   const card = document.createElement("div");
+   card.className = "result";
+
+   const link = document.createElement("a");
+   link.href = "#";
+   link.textContent = item.title || item.url;
+   link.onclick = e => {
+    e.preventDefault();
+    openWebsite(item.url);
+   };
+
+   const desc = document.createElement("p");
+   desc.textContent = item.description || "";
+
+   const address = document.createElement("p");
+   address.textContent = item.url;
+
+   card.append(link,desc,address);
+   $("results").appendChild(card);
+  });
+ }catch(error){
+  $("searchStatus").textContent = error.message;
+ }
+};
 
 $("coordinateMode").onclick = () => {
-  if(running) return;
-  mode = "coordinate";
-  $("coordinateMode").classList.add("active");
-  $("elementMode").classList.remove("active");
-  clearTarget();
-  $("status").textContent = "座標選択モードです。";
+ if(running) return;
+ cancelPicking();
+ mode = "coordinate";
+ $("coordinateMode").classList.add("active");
+ $("elementMode").classList.remove("active");
+ clearTarget();
+ setStatus("座標選択モードです。");
 };
 
 $("elementMode").onclick = () => {
-  if(running) return;
-  mode = "element";
-  $("elementMode").classList.add("active");
-  $("coordinateMode").classList.remove("active");
-  clearTarget();
-  $("status").textContent = "ボタン選択モードです。";
+ if(running) return;
+ cancelPicking();
+ mode = "element";
+ $("elementMode").classList.add("active");
+ $("coordinateMode").classList.remove("active");
+ clearTarget();
+ setStatus("ボタン選択モードです。");
 };
 
-$("pick").onclick = beginPicking;
+$("pick").onclick = () => {
+ if(running) return;
 
+ selecting = true;
+ $("selectionBanner").style.display = "block";
+ setStatus("選択中：ページ内の対象をクリックしてください。");
+};
 
-$("pickOverlay").onclick = e => {
-  if(!selecting) return;
+$("cancelPick").onclick = () => {
+ cancelPicking();
+ setStatus("選択をキャンセルしました。");
+};
 
-  const x = e.clientX;
-  const y = e.clientY;
-
-  // オーバーレイを一時的に隠して、下の要素を取得
-  $("pickOverlay").style.display = "none";
-  $("pickHint").style.display = "none";
-
-  const element = document.elementFromPoint(x, y);
-
-  // 選択画面を戻す
-  $("pickOverlay").style.display = "block";
-  $("pickHint").style.display = "block";
-
-  if(!element) return;
-
-  if(element.closest("header,footer")) {
-    $("status").textContent = "この場所は選択できません。";
-    return;
-  }
-
-  if(mode === "element"){
-    const button = element.closest(
-      "button,[role='button'],input[type='button'],input[type='submit'],a"
-    );
-
-    if(!button){
-      $("status").textContent = "ボタンの上をクリックしてね！";
-      return;
-    }
-
-    target = {type:"element",element:button};
-    button.classList.add("ac-highlight");
-    lastHighlighted = button;
-
-    $("targetInfo").textContent =
-      "対象ボタン：" +
-      (button.innerText || button.value || button.tagName).trim().slice(0,60);
-
-  } else {
-    target = {type:"coordinate",x,y};
-
-    $("targetInfo").textContent =
-      "座標：" + Math.round(x) + ", " + Math.round(y);
-  }
-
+document.addEventListener("keydown", e => {
+ if(e.key === "Escape" && selecting){
   cancelPicking();
-  $("status").textContent = "対象を設定しました！";
+  setStatus("選択をキャンセルしました。");
+ }
+});
+
+// 選択対象の取得。選択操作のクリックはページ側へ伝えない。
+document.addEventListener("click", e => {
+ if(!selecting) return;
+
+ const clicked = e.target;
+
+ // AUTO CLICKERの操作ボタンは選択対象にしない
+ if(clicked.closest("main .panel:last-child")){
+  if(!clicked.closest("#pick")) return;
+ }
+
+ if(clicked.closest("header,footer")){
+  return;
+ }
+
+ if(clicked.closest("#selectionBanner")) return;
+
+ if(mode === "element"){
+  const button = clicked.closest(
+   "button,[role='button'],input[type='button'],input[type='submit'],a"
+  );
+
+  if(!button){
+   setStatus("ボタンの上をクリックしてください。");
+   return;
+  }
+
+  if(button.closest("#selectionBanner")) return;
+
+  clearTarget();
+  target = {type:"element",element:button};
+  button.classList.add("ac-highlight");
+  lastHighlighted = button;
+
+  $("targetInfo").textContent =
+   "対象ボタン：" +
+   (button.innerText || button.value || button.tagName).trim().slice(0,60);
+
+ }else{
+  clearTarget();
+  target = {
+   type:"coordinate",
+   x:e.clientX,
+   y:e.clientY
+  };
+
+  $("targetInfo").textContent =
+   "座標：" + Math.round(e.clientX) + ", " + Math.round(e.clientY);
+ }
+
+ cancelPicking();
+ setStatus("対象を設定しました！");
+}, true);
+
+function clickTarget(){
+ if(!target) return;
+
+ if(target.type === "element"){
+  if(!target.element.isConnected){
+   stop();
+   setStatus("選択したボタンが見つかりません。もう一度選択してください。");
+   clearTarget();
+   return;
+  }
+
+  target.element.click();
+ }else{
+  const element = document.elementFromPoint(target.x,target.y);
+  if(element){
+   element.click();
+  }
+ }
+}
+
+function stop(){
+ if(timer !== null){
+  clearInterval(timer);
+  timer = null;
+ }
+
+ running = false;
+ $("start").disabled = false;
+ $("stop").disabled = true;
+}
+
+$("start").onclick = () => {
+ if(running) return;
+
+ if(!target){
+  setStatus("先にクリック対象を選択してください。");
+  return;
+ }
+
+ const interval = Number($("interval").value);
+ const max = Number($("maxClicks").value);
+
+ if(!Number.isInteger(interval) || interval < 100 || interval > 10000 ||
+    !Number.isInteger(max) || max < 0 || max > 1000){
+  alert("間隔または回数を確認してください。");
+  return;
+ }
+
+ clicks = 0;
+ $("counter").textContent = "0";
+ running = true;
+ $("start").disabled = true;
+ $("stop").disabled = false;
+ setStatus("クリック動作中です。");
+
+ timer = setInterval(() => {
+  if(!running) return;
+
+  clickTarget();
+  if(!running) return;
+
+  clicks++;
+  $("counter").textContent = clicks;
+
+  if(max !== 0 && clicks >= max){
+   stop();
+   setStatus("設定回数に達しました。");
+  }
+ },interval);
+};
+
+$("stop").onclick = () => {
+ stop();
+ setStatus("停止しました。");
+};
+
+$("reset").onclick = () => {
+ stop();
+ cancelPicking();
+ clearTarget();
+
+ clicks = 0;
+ $("counter").textContent = "0";
+ setStatus("リセットしました。");
 };
 </script>
+
 </body>
 </html>
