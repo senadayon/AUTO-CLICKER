@@ -1,158 +1,262 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUTO CLICKER</title>
+<title>AUTO CLICKER v2</title>
+
 <style>
 *{box-sizing:border-box}
+
 body{
   margin:0;
   background:#090711;
   color:#f5f0ff;
   font-family:Arial,sans-serif;
 }
+
 header{
-  padding:20px;
+  padding:18px 22px;
   background:#120d20;
-  border-bottom:1px solid #382653;
+  border-bottom:1px solid #392653;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
 }
+
 .logo{
+  color:#c084fc;
   font-size:23px;
   font-weight:900;
-  color:#c084fc;
   letter-spacing:2px;
 }
-.status{color:#a78bfa;font-size:12px}
+
 main{
-  max-width:1150px;
-  margin:auto;
-  padding:20px;
+  width:min(1100px,94%);
+  margin:25px auto;
 }
-h2{color:#c084fc}
+
 .panel{
   background:#151020;
-  border:1px solid #382653;
-  border-radius:15px;
-  padding:18px;
-  margin-bottom:18px;
+  border:1px solid #392653;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
 }
-.search{
-  display:flex;
-  gap:8px;
+
+h2{
+  color:#c084fc;
+  margin-top:0;
 }
-input,button{
-  border:1px solid #493365;
-  border-radius:9px;
-  padding:12px;
-  font-size:14px;
-}
+
 input{
   background:#0c0914;
   color:white;
+  border:1px solid #493365;
+  padding:13px;
+  border-radius:9px;
+  width:100%;
   min-width:0;
+  outline:none;
 }
-.search input{flex:1}
+
+input:focus{
+  border-color:#c084fc;
+}
+
 button{
   background:#8b5cf6;
   color:white;
-  font-weight:bold;
+  border:0;
+  padding:12px 17px;
+  border-radius:9px;
   cursor:pointer;
+  font-weight:bold;
 }
-button:hover{background:#a78bfa}
-button.stop{background:#be315b}
-button:disabled{opacity:.4;cursor:not-allowed}
-iframe{
-  width:100%;
-  height:420px;
+
+button:hover{
+  background:#a78bfa;
+}
+
+button:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.red{background:#be315b}
+.gray{background:#393047}
+
+.searchrow{
+  display:flex;
+  gap:9px;
+}
+
+.results{
+  margin-top:15px;
+  display:grid;
+  gap:10px;
+}
+
+.result{
+  background:#211832;
   border:1px solid #493365;
   border-radius:12px;
-  background:white;
+  padding:14px;
 }
-.small{color:#aaa0bb;font-size:12px;line-height:1.7}
+
+.result a{
+  color:#c084fc;
+  font-weight:bold;
+  text-decoration:none;
+}
+
+.result a:hover{
+  text-decoration:underline;
+}
+
+.result p{
+  color:#aaa0bb;
+  font-size:13px;
+  line-height:1.6;
+  overflow-wrap:anywhere;
+}
+
+.browserbar{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.browserbar input{flex:1}
+
+iframe{
+  width:100%;
+  height:430px;
+  background:white;
+  border:1px solid #493365;
+  border-radius:12px;
+}
+
+.notice{
+  color:#aaa0bb;
+  font-size:12px;
+  line-height:1.7;
+}
+
 .controls{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:14px;
 }
-label{display:block;color:#c4b5fd;font-size:13px;margin-bottom:8px}
-.control input{width:100%}
-.big{
-  font-size:36px;
+
+label{
+  display:block;
+  color:#c4b5fd;
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.counter{
+  font-size:40px;
   color:#c084fc;
   font-weight:bold;
-  margin:12px 0;
+  margin:15px 0 0;
 }
-.buttons{display:flex;gap:10px;flex-wrap:wrap}
-#testArea{
-  height:230px;
-  border:2px dashed #8b5cf6;
-  border-radius:12px;
+
+.actions{
   display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  gap:12px;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:15px;
+}
+
+#testArea{
   position:relative;
+  height:260px;
   background:#0d0a16;
+  border:2px dashed #8b5cf6;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:15px;
   overflow:hidden;
 }
-#testArea button{
-  background:#6d28d9;
-  padding:15px 25px;
-}
+
 #testArea.picking{
   border:2px solid #c084fc;
   cursor:crosshair;
 }
-#targetInfo{color:#c084fc;font-size:13px}
-footer{text-align:center;color:#6d627d;padding:25px}
+
+#testButton{
+  padding:17px 28px;
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:#766b88;
+}
+
 @media(max-width:600px){
   .controls{grid-template-columns:1fr}
-  iframe{height:320px}
-  main{padding:12px}
+  .searchrow{flex-direction:column}
+  iframe{height:340px}
+  main{margin:15px auto}
+  .panel{padding:15px}
 }
 </style>
 </head>
+
 <body>
 
 <header>
   <div class="logo">⚡ AUTO CLICKER</div>
-  <div class="status">● SYSTEM ONLINE</div>
+  <span style="color:#a78bfa;font-size:12px">
+    VERSION 2.0
+  </span>
 </header>
 
 <main>
 
 <section class="panel">
-  <h2>🔎 SEARCH</h2>
-  <form class="search" id="searchForm">
-    <input id="searchInput" placeholder="検索したい言葉を入力..." required>
+  <h2>🔎 BING SEARCH</h2>
+
+  <form id="searchForm" class="searchrow">
+    <input id="searchInput"
+      placeholder="検索したい言葉を入力..."
+      required>
     <button type="submit">検索</button>
   </form>
-  <p class="small">
-    検索結果は別タブで開くこともできます。
-    外部サイトは埋め込みを拒否する場合があります。
+
+  <div id="searchStatus" class="notice"></div>
+  <div id="results" class="results"></div>
+
+  <p class="notice">
+    検索結果を選ぶと、下のブラウザ画面で開きます。
   </p>
-  <div class="buttons">
-    <button id="openSearch" type="button">検索ページを開く</button>
-  </div>
 </section>
 
 <section class="panel">
-  <h2>🌐 WEBSITE VIEW</h2>
+  <h2>🌐 INTERNAL BROWSER</h2>
+
+  <div class="browserbar">
+    <input id="urlInput" placeholder="https://example.com">
+    <button id="goButton">開く</button>
+  </div>
+
   <iframe
     id="browser"
-    title="検索サイト表示"
+    title="AUTO CLICKER browser"
     src="about:blank"
     referrerpolicy="no-referrer">
   </iframe>
-  <p class="small">
-    外部サイトの表示や操作は、そのサイトの設定と
-    ブラウザのセキュリティ制限に左右されます。
+
+  <p class="notice">
+    戻る・進む・更新は、通常の外部サイトでは
+    ブラウザの制限により利用できない場合があります。
+    サイトがiframe表示を拒否している場合は表示できません。
   </p>
 </section>
 
@@ -160,41 +264,49 @@ footer{text-align:center;color:#6d627d;padding:25px}
   <h2>⚡ AUTO CLICKER</h2>
 
   <div class="controls">
-    <div class="control">
-      <label>クリック間隔（ミリ秒）</label>
-      <input id="interval" type="number" min="100" max="10000" value="500">
+    <div>
+      <label>クリック間隔（ms）</label>
+      <input id="interval" type="number"
+        min="100" max="10000" value="500">
     </div>
-    <div class="control">
-      <label>クリック回数（0は無制限）</label>
-      <input id="maxClicks" type="number" min="0" max="1000" value="20">
+
+    <div>
+      <label>クリック回数（0 = 無制限）</label>
+      <input id="maxClicks" type="number"
+        min="0" max="1000" value="20">
     </div>
   </div>
 
-  <div class="big" id="counter">0</div>
-  <div class="small">TOTAL CLICKS</div>
-  <p id="targetInfo">クリック位置：未選択</p>
+  <div class="counter" id="counter">0</div>
+  <div class="notice">TOTAL CLICKS</div>
 
-  <div class="buttons">
-    <button id="pick" type="button">🎯 位置を選択</button>
-    <button id="start" type="button">▶ START</button>
-    <button id="stop" type="button" class="stop" disabled>■ STOP</button>
-    <button id="reset" type="button">↻ RESET</button>
+  <p id="targetInfo" class="notice">
+    クリック位置：未選択
+  </p>
+
+  <div class="actions">
+    <button id="pick">🎯 位置を選択</button>
+    <button id="start">▶ START</button>
+    <button id="stop" class="red" disabled>■ STOP</button>
+    <button id="reset" class="gray">↻ RESET</button>
   </div>
 
-  <p class="small">
-    このクリック機能は下のテストエリア専用です。
-    外部サイトのiframe内にはアクセスしません。
+  <p class="notice">
+    クリック機能は下のテストエリア専用です。
+    外部サイト内のクリックは行いません。
   </p>
 </section>
 
 <section class="panel">
   <h2>🎯 CLICK TEST AREA</h2>
-  <p class="small">
-    位置を選択してから、このエリア内の好きな場所をクリックしてね。
+
+  <p class="notice">
+    位置を選択してから、下のエリアをクリックしてね。
   </p>
+
   <div id="testArea">
-    <button id="testButton" type="button">TEST BUTTON</button>
-    <span id="testCount">ボタンのクリック数：0</span>
+    <button id="testButton">TEST BUTTON</button>
+    <span id="testCount">クリック数：0</span>
   </div>
 </section>
 
@@ -205,45 +317,109 @@ footer{text-align:center;color:#6d627d;padding:25px}
 <script>
 const $ = id => document.getElementById(id);
 
+const browser = $("browser");
+const results = $("results");
+
 let timer = null;
-let clicks = 0;
-let buttonClicks = 0;
-let target = null;
 let running = false;
 let picking = false;
+let target = null;
+let clicks = 0;
+let buttonClicks = 0;
+
+function openWebsite(url){
+  try{
+    const parsed = new URL(url);
+
+    if(!["http:","https:"].includes(parsed.protocol)){
+      throw new Error("URLが正しくありません");
+    }
+
+    $("urlInput").value = parsed.href;
+    browser.src = parsed.href;
+  }catch(e){
+    alert("正しいURLを入力してください");
+  }
+}
+
+$("searchForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const q = $("searchInput").value.trim();
+
+  if(!q) return;
+
+  $("searchStatus").textContent = "Bingで検索中...";
+  results.innerHTML = "";
+
+  try{
+    const response = await fetch(
+      "/api/search?q=" + encodeURIComponent(q)
+    );
+
+    const data = await response.json();
+
+    if(!response.ok){
+      throw new Error(data.error || "検索できませんでした");
+    }
+
+    $("searchStatus").textContent =
+      data.results.length + "件の検索結果";
+
+    if(data.results.length === 0){
+      $("searchStatus").textContent =
+        "検索結果がありませんでした。";
+    }
+
+    data.results.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "result";
+
+      const link = document.createElement("a");
+      link.href = "#";
+      link.textContent = item.title || item.url;
+
+      link.addEventListener("click", e => {
+        e.preventDefault();
+        openWebsite(item.url);
+      });
+
+      const description = document.createElement("p");
+      description.textContent = item.description || "";
+
+      const urlText = document.createElement("p");
+      urlText.textContent = item.url;
+
+      card.append(link, description, urlText);
+      results.appendChild(card);
+    });
+
+  }catch(error){
+    $("searchStatus").textContent =
+      error.message || "検索に失敗しました";
+  }
+});
+
+$("goButton").addEventListener("click", () => {
+  openWebsite($("urlInput").value.trim());
+});
+
+$("urlInput").addEventListener("keydown", e => {
+  if(e.key === "Enter"){
+    openWebsite($("urlInput").value.trim());
+  }
+});
 
 const area = $("testArea");
 
-$("searchForm").addEventListener("submit", e => {
-  e.preventDefault();
-  const q = $("searchInput").value.trim();
-  if(!q) return;
-
-  const url = "https://html.duckduckgo.com/html/?q="
-    + encodeURIComponent(q);
-
-window.open(url, "_blank", "noopener");
-});
-
-$("openSearch").addEventListener("click", () => {
-  const q = $("searchInput").value.trim();
-  if(!q) {
-    alert("検索ワードを入力してね！");
-    return;
-  }
-
-  const url = "https://duckduckgo.com/?q="
-    + encodeURIComponent(q);
-
-  window.open(url, "_blank", "noopener");
-});
-
 $("pick").addEventListener("click", () => {
   if(running) return;
+
   picking = true;
   area.classList.add("picking");
+
   $("targetInfo").textContent =
-    "テストエリア内のクリックしたい位置を選んでね！";
+    "テストエリア内の位置をクリックしてね！";
 });
 
 area.addEventListener("click", e => {
@@ -252,40 +428,41 @@ area.addEventListener("click", e => {
   const rect = area.getBoundingClientRect();
 
   target = {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
+    x:e.clientX - rect.left,
+    y:e.clientY - rect.top
   };
 
   picking = false;
   area.classList.remove("picking");
 
   $("targetInfo").textContent =
-    "選択位置：X " + Math.round(target.x)
-    + " / Y " + Math.round(target.y);
+    "選択位置：X " + Math.round(target.x) +
+    " / Y " + Math.round(target.y);
 });
 
-function clickAtTarget() {
+function clickTarget(){
   if(!target) return;
 
   const rect = area.getBoundingClientRect();
 
-  const x = Math.max(0, Math.min(target.x, rect.width));
-  const y = Math.max(0, Math.min(target.y, rect.height));
-
   const element = document.elementFromPoint(
-    rect.left + x,
-    rect.top + y
+    rect.left + target.x,
+    rect.top + target.y
   );
 
-  if(!element || !area.contains(element)) return;
+  if(element && area.contains(element)){
+    const button = element.closest("button");
 
-  if(element.closest("button")) {
-    element.closest("button").click();
+    if(button){
+      button.click();
+    }
   }
 }
 
-function stopClicker() {
-  if(timer) clearInterval(timer);
+function stop(){
+  if(timer !== null){
+    clearInterval(timer);
+  }
 
   timer = null;
   running = false;
@@ -297,7 +474,7 @@ function stopClicker() {
 $("start").addEventListener("click", () => {
   if(running) return;
 
-  if(!target) {
+  if(!target){
     alert("先に位置を選択してね！");
     return;
   }
@@ -305,65 +482,71 @@ $("start").addEventListener("click", () => {
   const interval = Number($("interval").value);
   const max = Number($("maxClicks").value);
 
-  if(!Number.isFinite(interval) || interval < 100 ||
-     interval > 10000) {
-    alert("間隔は100〜10000ミリ秒にしてね！");
+  if(!Number.isInteger(interval) ||
+     interval < 100 || interval > 10000){
+    alert("間隔は100〜10000msにしてね！");
     return;
   }
 
-  if(!Number.isInteger(max) || max < 0 || max > 1000) {
+  if(!Number.isInteger(max) || max < 0 || max > 1000){
     alert("回数は0〜1000にしてね！");
     return;
   }
 
   clicks = 0;
-  $("counter").textContent = clicks;
+  $("counter").textContent = "0";
 
   running = true;
   $("start").disabled = true;
   $("stop").disabled = false;
 
-  const run = () => {
+  function tick(){
     if(!running) return;
 
-    if(max !== 0 && clicks >= max) {
-      stopClicker();
+    if(max !== 0 && clicks >= max){
+      stop();
       return;
     }
 
-    clickAtTarget();
+    clickTarget();
+
     clicks++;
     $("counter").textContent = clicks;
 
-    if(max !== 0 && clicks >= max) {
-      stopClicker();
+    if(max !== 0 && clicks >= max){
+      stop();
     }
-  };
+  }
 
-  run();
+  tick();
 
-  if(running) {
-    timer = setInterval(run, interval);
+  if(running){
+    timer = setInterval(tick, interval);
   }
 });
 
-$("stop").addEventListener("click", stopClicker);
+$("stop").addEventListener("click", stop);
 
 $("reset").addEventListener("click", () => {
-  stopClicker();
+  stop();
+
   clicks = 0;
-  $("counter").textContent = "0";
   target = null;
   picking = false;
-  area.classList.remove("picking");
+
+  $("counter").textContent = "0";
   $("targetInfo").textContent = "クリック位置：未選択";
+
+  area.classList.remove("picking");
 });
 
 $("testButton").addEventListener("click", () => {
   buttonClicks++;
+
   $("testCount").textContent =
-    "ボタンのクリック数：" + buttonClicks;
+    "クリック数：" + buttonClicks;
 });
 </script>
+
 </body>
 </html>
