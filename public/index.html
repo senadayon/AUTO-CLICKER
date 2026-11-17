@@ -3,65 +3,156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUTO CLICKER v6</title>
+<title>AUTO CLICKER v7</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#090711;color:#f5f0ff;font-family:Arial,sans-serif}
-header{padding:18px 22px;background:#120d20;border-bottom:1px solid #392653;display:flex;justify-content:space-between;align-items:center}
-.logo{color:#c084fc;font-size:23px;font-weight:900;letter-spacing:2px}
+:root{
+ --cyan:#38eaff;
+ --blue:#258bff;
+ --purple:#9165ff;
+ --panel:rgba(8,22,48,.88);
+ --border:rgba(76,190,255,.45);
+}
+body{
+ margin:0;color:#f3f8ff;
+ font-family:Arial,sans-serif;
+ background:linear-gradient(125deg,
+ #041b45,#006bc5,#00b9e8,#2869db,
+ #7049d9,#087fc9,#04345e);
+ background-size:400% 400%;
+ animation:rainbow 16s ease infinite;
+ min-height:100vh;
+}
+@keyframes rainbow{
+ 0%{background-position:0% 50%}
+ 50%{background-position:100% 50%}
+ 100%{background-position:0% 50%}
+}
+header{
+ padding:18px 22px;
+ background:rgba(3,12,35,.8);
+ border-bottom:1px solid var(--border);
+ display:flex;justify-content:space-between;
+ align-items:center;gap:10px;
+ backdrop-filter:blur(14px);
+}
+.logo{
+ color:var(--cyan);font-size:23px;
+ font-weight:900;letter-spacing:2px;
+ text-shadow:0 0 15px #00cfff;
+}
+.version{color:#c6d8ff;font-size:12px}
 main{width:min(1100px,94%);margin:25px auto}
-.panel{background:#151020;border:1px solid #392653;border-radius:16px;padding:20px;margin-bottom:20px}
-h2{color:#c084fc;margin-top:0}
-input{background:#0c0914;color:white;border:1px solid #493365;padding:13px;border-radius:9px;width:100%;min-width:0}
-button{background:#8b5cf6;color:white;border:0;padding:12px 17px;border-radius:9px;cursor:pointer;font-weight:bold}
-button:hover{background:#a78bfa}
+.panel{
+ background:var(--panel);
+ border:1px solid var(--border);
+ border-radius:18px;padding:20px;
+ margin-bottom:20px;
+ box-shadow:0 0 24px rgba(0,180,255,.12);
+ backdrop-filter:blur(12px);
+}
+h2{color:var(--cyan);margin-top:0}
+input{
+ background:#07172e;color:white;
+ border:1px solid #328bc8;
+ padding:13px;border-radius:9px;
+ width:100%;min-width:0;
+}
+input:focus{
+ outline:2px solid var(--cyan);
+ border-color:transparent;
+}
+button{
+ background:linear-gradient(120deg,#087fca,#5365e9);
+ color:white;border:1px solid #66dfff;
+ padding:12px 17px;border-radius:9px;
+ cursor:pointer;font-weight:bold;
+ transition:.2s;
+}
+button:hover{
+ background:linear-gradient(120deg,#13bde8,#8461f5);
+ box-shadow:0 0 15px #29cfff;
+}
 button:disabled{opacity:.4;cursor:not-allowed}
-.red{background:#be315b}
-.gray{background:#393047}
+.red{background:#b52d70}
+.gray{background:#344c79}
 .searchrow,.browserbar{display:flex;gap:9px}
 .results{margin-top:15px;display:grid;gap:10px}
-.result{background:#211832;border:1px solid #493365;border-radius:12px;padding:14px}
-.result a{color:#c084fc;font-weight:bold;text-decoration:none}
-.result p{color:#aaa0bb;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.result{
+ background:rgba(15,39,78,.9);
+ border:1px solid #328bc8;
+ border-radius:12px;padding:14px;
+}
+.result a{color:#70eaff;font-weight:bold;text-decoration:none}
+.result p{
+ color:#b6cde9;font-size:13px;
+ line-height:1.6;overflow-wrap:anywhere;
+}
 .browserbar{margin-bottom:12px}
 .browserbar input{flex:1}
-iframe{width:100%;height:520px;background:white;border:1px solid #493365;border-radius:12px}
-.notice{color:#aaa0bb;font-size:12px;line-height:1.7}
-.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-label{display:block;color:#c4b5fd;font-size:13px;margin-bottom:8px}
-.counter{font-size:40px;color:#c084fc;font-weight:bold;margin:15px 0 0}
+iframe{
+ width:100%;height:520px;background:white;
+ border:1px solid #52bfff;border-radius:12px;
+}
+.notice{color:#b7d7f5;font-size:12px;line-height:1.8}
+.controls{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:14px;
+}
+label{
+ display:block;color:#8eeaff;
+ font-size:13px;margin-bottom:8px;
+}
+.counter{
+ font-size:42px;color:var(--cyan);
+ font-weight:bold;margin:15px 0 0;
+ text-shadow:0 0 18px #00cfff;
+}
 .actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
-.status{padding:12px;background:#211832;border-radius:9px;margin-top:12px}
+.status{
+ padding:13px;background:rgba(21,54,100,.8);
+ border:1px solid #287fc0;
+ border-radius:9px;margin-top:12px;
+}
 .mode{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-.mode button.active{outline:2px solid #e9d5ff;background:#6d28d9}
-.ac-highlight{outline:3px solid #c084fc!important;outline-offset:3px!important}
+.mode button.active{
+ outline:2px solid #a5eaff;
+ background:linear-gradient(120deg,#008dc9,#694ce4);
+}
+.ac-highlight{
+ outline:3px solid #35eaff!important;
+ outline-offset:3px!important;
+}
 #selectionBanner{
  display:none;position:fixed;top:12px;left:50%;
  transform:translateX(-50%);z-index:999999;
- background:#211832;color:white;padding:13px 18px;
- border:1px solid #c084fc;border-radius:10px;
+ background:#08264d;color:white;padding:14px 18px;
+ border:1px solid var(--cyan);border-radius:12px;
  width:max-content;max-width:90%;text-align:center;
- box-shadow:0 0 20px #9333ea
+ box-shadow:0 0 25px #00bfff;
 }
-footer{text-align:center;padding:25px;color:#766b88}
+.khint{
+ color:#70eaff;font-size:13px;
+ margin-top:12px;line-height:1.8;
+}
+footer{text-align:center;padding:25px;color:#d0e8ff}
 @media(max-width:600px){
  .controls{grid-template-columns:1fr}
  .searchrow{flex-direction:column}
  iframe{height:400px}
  main{margin:15px auto}
  .panel{padding:15px}
+ .logo{font-size:19px}
 }
 </style>
 </head>
 <body>
-
 <header>
  <div class="logo">⚡ AUTO CLICKER</div>
- <span style="color:#a78bfa;font-size:12px">VERSION 6.0</span>
+ <span class="version">VERSION 7.0 BLUE RAINBOW</span>
 </header>
 
 <main>
-
 <section class="panel">
  <h2>🔎 BING SEARCH</h2>
  <form id="searchForm" class="searchrow">
@@ -111,22 +202,26 @@ footer{text-align:center;padding:25px;color:#766b88}
  <div id="targetInfo" class="notice">対象：未選択</div>
 
  <div class="actions">
-  <button id="pick">🎯 位置を選択</button>
+  <button id="pick">🎯 位置設定モード</button>
   <button id="start">▶ START</button>
   <button id="stop" class="red" disabled>■ STOP</button>
   <button id="reset" class="gray">↻ RESET</button>
   <button id="cancelPick" class="gray">キャンセル</button>
  </div>
 
+ <div class="khint">
+  ⌨️ 位置設定モード中にカーソルを合わせて K キー！
+  <br>ESCキーでキャンセルできます。
+ </div>
+
  <div id="status" class="status notice">
   対象を選択してください。
  </div>
 </section>
-
 </main>
 
 <div id="selectionBanner">
- 🎯 ページ内の対象をクリックしてください。Escでキャンセル
+ 🎯 カーソルを対象に合わせて K キーを押してください。ESCでキャンセル
 </div>
 
 <footer>AUTO CLICKER © 2026</footer>
@@ -141,6 +236,8 @@ let running = false;
 let clicks = 0;
 let selecting = false;
 let lastHighlighted = null;
+let cursorX = 0;
+let cursorY = 0;
 
 function setStatus(message){
  $("status").textContent = message;
@@ -164,10 +261,8 @@ function openWebsite(value){
  try{
   const url = new URL(value);
   if(!["http:","https:"].includes(url.protocol)) throw Error();
-
   $("urlInput").value = url.href;
   $("browser").src = url.href;
-
   clearTarget();
   cancelPicking();
   setStatus("サイトを開いています。");
@@ -185,7 +280,6 @@ $("urlInput").onkeydown = e => {
 
 $("searchForm").onsubmit = async e => {
  e.preventDefault();
-
  const q = $("searchInput").value.trim();
  if(!q) return;
 
@@ -195,7 +289,6 @@ $("searchForm").onsubmit = async e => {
  try{
   const response = await fetch("/api/search?q=" + encodeURIComponent(q));
   const data = await response.json();
-
   if(!response.ok) throw Error(data.error || "検索できませんでした");
 
   $("searchStatus").textContent = data.results.length + "件の検索結果";
@@ -207,7 +300,6 @@ $("searchForm").onsubmit = async e => {
    const link = document.createElement("a");
    link.href = "#";
    link.textContent = item.title || item.url;
-
    link.onclick = e => {
     e.preventDefault();
     openWebsite(item.url);
@@ -229,37 +321,29 @@ $("searchForm").onsubmit = async e => {
 
 $("coordinateMode").onclick = () => {
  if(running) return;
-
  cancelPicking();
  mode = "coordinate";
-
  $("coordinateMode").classList.add("active");
  $("elementMode").classList.remove("active");
-
  clearTarget();
  setStatus("座標選択モードです。");
 };
 
 $("elementMode").onclick = () => {
  if(running) return;
-
  cancelPicking();
  mode = "element";
-
  $("elementMode").classList.add("active");
  $("coordinateMode").classList.remove("active");
-
  clearTarget();
  setStatus("ボタン選択モードです。");
 };
 
 $("pick").onclick = () => {
  if(running) return;
-
  selecting = true;
  $("selectionBanner").style.display = "block";
-
- setStatus("選択中：画面内の対象をクリックしてください。");
+ setStatus("選択中：カーソルを対象に合わせてKキーを押してください。");
 };
 
 $("cancelPick").onclick = () => {
@@ -267,71 +351,62 @@ $("cancelPick").onclick = () => {
  setStatus("選択をキャンセルしました。");
 };
 
+document.addEventListener("mousemove", e => {
+ if(!selecting) return;
+ cursorX = e.clientX;
+ cursorY = e.clientY;
+},true);
+
 document.addEventListener("keydown", e => {
  if(e.key === "Escape" && selecting){
   cancelPicking();
   setStatus("選択をキャンセルしました。");
+  return;
  }
-});
 
-// AUTO CLICKERの画面全体で対象を選択
-document.addEventListener("click", e => {
- if(!selecting) return;
+ if(e.key.toLowerCase() !== "k" || !selecting) return;
 
- const clicked = e.target;
+ const x = cursorX;
+ const y = cursorY;
+ const element = document.elementFromPoint(x,y);
 
- // 操作用ボタンは選択対象にしない
- if(clicked.closest(
-  "#pick,#start,#stop,#reset,#cancelPick," +
+ if(!element) return;
+
+ if(element.closest(
+  "#pick,#start,#stop,#reset,#cancelPick,"+
   "#coordinateMode,#elementMode,#selectionBanner"
- )) return;
+ )){
+  setStatus("AUTO CLICKERの操作ボタン以外を選んでね。");
+  return;
+ }
 
- if(clicked.closest("header,footer")) return;
+ clearTarget();
 
  if(mode === "element"){
-  const button = clicked.closest(
-   "button,[role='button'],input[type='button']," +
+  const button = element.closest(
+   "button,[role='button'],input[type='button'],"+
    "input[type='submit'],a"
   );
 
   if(!button){
-   setStatus("ボタンの上をクリックしてください。");
+   setStatus("ボタンの上にカーソルを合わせてKを押してね。");
    return;
   }
 
-  clearTarget();
-
-  target = {
-   type:"element",
-   element:button
-  };
-
+  target = {type:"element",element:button};
   button.classList.add("ac-highlight");
   lastHighlighted = button;
-
   $("targetInfo").textContent =
-   "対象ボタン：" +
-   (button.innerText || button.value || button.tagName)
-   .trim().slice(0,60);
-
+   "対象ボタン："+(button.innerText || button.value || button.tagName).trim().slice(0,60);
  }else{
-  clearTarget();
-
-  target = {
-   type:"coordinate",
-   x:e.clientX,
-   y:e.clientY
-  };
-
+  target = {type:"coordinate",x,y};
   $("targetInfo").textContent =
-   "座標：" +
-   Math.round(e.clientX) + ", " +
-   Math.round(e.clientY);
+   "登録位置："+Math.round(x)+", "+Math.round(y);
  }
 
  cancelPicking();
- setStatus("対象を設定しました！");
-},true);
+ setStatus("Kキーで位置を登録しました！");
+});
 
 function clickTarget(){
  if(!target) return;
@@ -343,15 +418,10 @@ function clickTarget(){
    setStatus("対象が見つかりません。もう一度選択してください。");
    return;
   }
-
   target.element.click();
-
  }else{
   const element = document.elementFromPoint(target.x,target.y);
-
-  if(element){
-   element.click();
-  }
+  if(element) element.click();
  }
 }
 
@@ -360,16 +430,13 @@ function stop(){
   clearInterval(timer);
   timer = null;
  }
-
  running = false;
-
  $("start").disabled = false;
  $("stop").disabled = true;
 }
 
 $("start").onclick = () => {
  if(running) return;
-
  if(!target){
   setStatus("先にクリック対象を選択してください。");
   return;
@@ -379,27 +446,23 @@ $("start").onclick = () => {
  const max = Number($("maxClicks").value);
 
  if(!Number.isInteger(interval) || interval < 100 ||
-    interval > 10000 || !Number.isInteger(max) ||
-    max < 0 || max > 1000){
+ interval > 10000 || !Number.isInteger(max) ||
+ max < 0 || max > 1000){
   alert("間隔または回数を確認してください。");
   return;
  }
 
  clicks = 0;
  $("counter").textContent = "0";
-
  running = true;
  $("start").disabled = true;
  $("stop").disabled = false;
-
  setStatus("クリック動作中です。");
 
  timer = setInterval(() => {
   if(!running) return;
-
   clickTarget();
   if(!running) return;
-
   clicks++;
   $("counter").textContent = clicks;
 
@@ -419,13 +482,10 @@ $("reset").onclick = () => {
  stop();
  cancelPicking();
  clearTarget();
-
  clicks = 0;
  $("counter").textContent = "0";
-
  setStatus("リセットしました。");
 };
-
 </script>
 </body>
 </html>
