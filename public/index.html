@@ -547,7 +547,7 @@ $("start").onclick = ()=>{
  const interval = Number($("interval").value);
  const max = Number($("maxClicks").value);
 
- if(!Number.isInteger(interval) || interval < 10 ||
+ if(!Number.isInteger(interval) || interval < 1 ||
  interval > 10000 || !Number.isInteger(max) ||
  max < 0 || max > 1000){
   alert("間隔または回数を確認してください。");
