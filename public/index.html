@@ -161,11 +161,11 @@ footer{text-align:center;padding:25px;color:#d0e8ff}
  <div class="controls">
   <div>
    <label>クリック間隔（ms）</label>
-   <input id="interval" type="number" min="10" max="10000" value="500">
+   <input id="interval" type="number" min="10" max="10000" value="10">
   </div>
   <div>
    <label>クリック回数（0 = 無制限）</label>
-   <input id="maxClicks" type="number" min="0" max="1000" value="20">
+   <input id="maxClicks" type="number" min="0" max="1000" value="0">
   </div>
  </div>
 
@@ -454,7 +454,7 @@ $("start").onclick = ()=>{
  const interval = Number($("interval").value);
  const max = Number($("maxClicks").value);
 
- if(!Number.isInteger(interval) || interval < 100 ||
+ if(!Number.isInteger(interval) || interval < 10 ||
  interval > 10000 || !Number.isInteger(max) ||
  max < 0 || max > 1000){
   alert("間隔または回数を確認してください。");
