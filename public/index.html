@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUTO CLICKER v8</title>
+<title>AUTO CLICKER v9</title>
 <style>
 *{box-sizing:border-box}
 :root{
@@ -87,9 +88,14 @@ label{display:block;color:#8eeaff;font-size:13px;margin-bottom:8px}
 .testNumber{font-size:44px;font-weight:bold;color:#70edff;text-shadow:0 0 15px #00cfff}
 .testButton{font-size:17px;padding:17px 30px;background:linear-gradient(120deg,#008fc8,#744de9)}
 .testLog{color:#b8dcff;font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}
+.stat{background:rgba(15,39,78,.8);padding:13px;border-radius:10px;border:1px solid #328bc8}
+.stat strong{display:block;color:var(--cyan);font-size:24px;margin-top:5px}
+.ac-highlight{outline:4px solid #ffeb3b!important;box-shadow:0 0 20px #ffeb3b!important}
 footer{text-align:center;padding:25px;color:#d0e8ff}
 @media(max-width:600px){
  .controls{grid-template-columns:1fr}
+ .stats{grid-template-columns:1fr}
  .searchrow{flex-direction:column}
  iframe{height:400px}
  main{margin:15px auto}
@@ -101,7 +107,7 @@ footer{text-align:center;padding:25px;color:#d0e8ff}
 <body>
 <header>
  <div class="logo">⚡ AUTO CLICKER</div>
- <span class="version">VERSION 8.0 BLUE RAINBOW</span>
+ <span class="version">VERSION 9.0 BLUE RAINBOW</span>
 </header>
 
 <main>
@@ -163,9 +169,13 @@ footer{text-align:center;padding:25px;color:#d0e8ff}
   </div>
  </div>
 
- <div class="counter" id="counter">0</div>
- <div class="notice">TOTAL CLICKS</div>
- <div id="targetInfo" class="notice">対象：未選択</div>
+ <div class="stats">
+  <div class="stat">TOTAL CLICKS<strong id="counter">0</strong></div>
+  <div class="stat">TEST RECEIVED<strong id="receivedCount">0</strong></div>
+  <div class="stat">FAILED TESTS<strong id="failedCount">0</strong></div>
+ </div>
+
+ <div id="targetInfo" class="notice" style="margin-top:14px">対象：未選択</div>
 
  <div class="actions">
   <button id="pick">🎯 位置設定モード</button>
@@ -178,7 +188,7 @@ footer{text-align:center;padding:25px;color:#d0e8ff}
  <div class="khint">
   ⌨️ 位置設定モード中にカーソルを合わせて K キー！
   <br>ESCキーでキャンセルできます。
-  <br>※START・STOP・RESETは誤操作防止のため選択対象から除外しています。
+  <br>※START・STOP・RESETなどの操作ボタンは選択対象から除外しています。
  </div>
 
  <div id="status" class="status notice">対象を選択してください。</div>
@@ -204,22 +214,18 @@ let cursorX = 0;
 let cursorY = 0;
 
 let testClicks = 0;
+let failedTests = 0;
 
 function setStatus(message){
  $("status").textContent = message;
 }
 
-$("testButton").addEventListener("click",()=>{
- testClicks++;
+function updateStats(){
+ $("counter").textContent = clicks;
+ $("receivedCount").textContent = testClicks;
+ $("failedCount").textContent = failedTests;
  $("testCount").textContent = testClicks;
- $("testLog").textContent = "クリックイベントを受信しました！";
-});
-
-$("testReset").onclick = ()=>{
- testClicks = 0;
- $("testCount").textContent = "0";
- $("testLog").textContent = "テスト回数をリセットしました。";
-};
+}
 
 function clearTarget(){
  if(lastHighlighted){
@@ -234,6 +240,19 @@ function cancelPicking(){
  selecting = false;
  $("selectionBanner").style.display = "none";
 }
+
+$("testButton").addEventListener("click",()=>{
+ testClicks++;
+ updateStats();
+ $("testLog").textContent = "クリックイベントを受信しました！";
+});
+
+$("testReset").onclick = ()=>{
+ testClicks = 0;
+ failedTests = 0;
+ updateStats();
+ $("testLog").textContent = "テスト回数をリセットしました。";
+};
 
 function openWebsite(value){
  try{
@@ -265,11 +284,13 @@ $("searchForm").onsubmit = async e => {
   const response = await fetch("/api/search?q=" + encodeURIComponent(q));
   const data = await response.json();
   if(!response.ok) throw Error(data.error || "検索できませんでした");
+
   $("searchStatus").textContent = data.results.length + "件の検索結果";
 
   data.results.forEach(item=>{
    const card = document.createElement("div");
    card.className = "result";
+
    const link = document.createElement("a");
    link.href = "#";
    link.textContent = item.title || item.url;
@@ -277,10 +298,13 @@ $("searchForm").onsubmit = async e => {
     e.preventDefault();
     openWebsite(item.url);
    };
+
    const desc = document.createElement("p");
    desc.textContent = item.description || "";
+
    const address = document.createElement("p");
    address.textContent = item.url;
+
    card.append(link,desc,address);
    $("results").appendChild(card);
   });
@@ -334,8 +358,7 @@ document.addEventListener("keydown",e=>{
   return;
  }
 
- if(e.key.toLowerCase() !== "k" || !selecting) return;
- if(e.repeat) return;
+ if(e.key.toLowerCase() !== "k" || !selecting || e.repeat) return;
 
  const x = cursorX;
  const y = cursorY;
@@ -359,6 +382,7 @@ document.addEventListener("keydown",e=>{
    "button,[role='button'],input[type='button'],"+
    "input[type='submit'],a"
   );
+
   if(!button){
    setStatus("ボタンの上にカーソルを合わせてKを押してください。");
    return;
@@ -367,6 +391,7 @@ document.addEventListener("keydown",e=>{
   target = {type:"element",element:button};
   button.classList.add("ac-highlight");
   lastHighlighted = button;
+
   $("targetInfo").textContent =
    "対象ボタン："+(button.innerText || button.value || button.tagName).trim().slice(0,60);
  }else{
@@ -382,26 +407,29 @@ document.addEventListener("keydown",e=>{
 function clickTarget(){
  if(!target) return false;
 
+ let element;
+
  if(target.type === "element"){
-  if(!target.element.isConnected){
+  element = target.element;
+  if(!element.isConnected){
    stop();
    clearTarget();
    setStatus("対象が見つかりません。もう一度選択してください。");
    return false;
   }
-
-  target.element.click();
-  return true;
+ }else{
+  element = document.elementFromPoint(target.x,target.y);
+  if(!element){
+   stop();
+   setStatus("登録位置に対象がありません。");
+   return false;
+  }
  }
 
- const element = document.elementFromPoint(target.x,target.y);
- if(!element){
-  setStatus("登録位置に対象がありません。");
-  stop();
-  return false;
- }
-
+ // ページ内のDOM要素へクリックイベントを送信
  element.click();
+
+ // CLICK TEST以外のクリックは、受信数として数えない
  return true;
 }
 
@@ -417,6 +445,7 @@ function stop(){
 
 $("start").onclick = ()=>{
  if(running) return;
+
  if(!target){
   setStatus("先にクリック対象を選択してください。");
   return;
@@ -433,7 +462,7 @@ $("start").onclick = ()=>{
  }
 
  clicks = 0;
- $("counter").textContent = "0";
+ updateStats();
  running = true;
  $("start").disabled = true;
  $("stop").disabled = false;
@@ -441,11 +470,30 @@ $("start").onclick = ()=>{
 
  timer = setInterval(()=>{
   if(!running) return;
+
+  const isTestTarget =
+   target && (
+    (target.type === "element" && target.element === $("testButton")) ||
+    (target.type === "coordinate" &&
+     $("testButton").getBoundingClientRect().left <= target.x &&
+     $("testButton").getBoundingClientRect().right >= target.x &&
+     $("testButton").getBoundingClientRect().top <= target.y &&
+     $("testButton").getBoundingClientRect().bottom >= target.y)
+   );
+
+  const before = testClicks;
   const success = clickTarget();
+
   if(!success || !running) return;
 
   clicks++;
-  $("counter").textContent = clicks;
+
+  if(isTestTarget && testClicks === before){
+   failedTests++;
+   $("testLog").textContent = "クリックイベントを受信できませんでした。";
+  }
+
+  updateStats();
 
   if(max !== 0 && clicks >= max){
    stop();
@@ -464,7 +512,7 @@ $("reset").onclick = ()=>{
  cancelPicking();
  clearTarget();
  clicks = 0;
- $("counter").textContent = "0";
+ updateStats();
  setStatus("リセットしました。");
 };
 </script>
