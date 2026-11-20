@@ -148,6 +148,19 @@ button:hover{background:#ffffff30}
  #taskLeft{display:none}
  #icons{max-height:calc(100% - 60px)}
 }
+ /* 画面いっぱいに表示する修正 */
+.window{
+  max-height:calc(100vh - 48px) !important;
+}
+
+.window.maximized{
+  top:0 !important;
+  left:0 !important;
+  width:100% !important;
+  height:calc(100vh - 48px) !important;
+  max-height:calc(100vh - 48px) !important;
+  border-radius:0 !important;
+}
 </style>
 </head>
 <body>
