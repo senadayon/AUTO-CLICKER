@@ -1,8 +1,7 @@
-
 {
-  "name": "auto-clicker",
+  "name": "web-windows",
   "version": "1.0.0",
-  "description": "AUTO CLICKER",
+  "description": "Browser Windows Desktop Simulator",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
