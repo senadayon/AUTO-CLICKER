@@ -446,3 +446,222 @@ function renderApp(id,b){
  if(id==="About"){b.innerHTML="<h2>Web Windows</h2><p>ブラウザ上で動くWindows風デスクトップ</p><p>Version 1.0</p>";return}
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+ function renderBrowser(b){
+ browserTabs=[{title:"新しいタブ",url:"",history:[],pos:-1}];
+ activeTab=0;
+ b.className="winBody noPad";
+ b.innerHTML=`<div class="browser">
+  <div class="tabs" id="browserTabs"></div>
+  <div class="browserbar">
+   <button onclick="browserBack()">←</button>
+   <button onclick="browserForward()">→</button>
+   <button onclick="browserReload()">↻</button>
+   <button onclick="browserHome()">⌂</button>
+   <input id="browserUrl" placeholder="検索または URL を入力">
+   <button onclick="browserGo()">移動</button>
+  </div>
+  <div class="browserContent" id="browserContent"></div>
+ </div>`;
+ $("browserUrl").onkeydown=e=>{if(e.key==="Enter")browserGo()};
+ renderTabs();
+}
+function renderTabs(){
+ $("browserTabs").innerHTML=browserTabs.map((t,i)=>`
+ <div class="tab ${i===activeTab?"active":""}" onclick="selectTab(${i})">
+ <span>${escapeHtml(t.title)}</span>
+ <span class="tabclose" onclick="event.stopPropagation();closeTab(${i})">×</span>
+ </div>`).join("")+`<button onclick="newTab()">＋</button>`;
+ let t=browserTabs[activeTab];
+ $("browserUrl").value=t.url||"";
+}
+function selectTab(i){
+ activeTab=i;renderTabs();showBrowserPage();
+}
+function newTab(){
+ browserTabs.push({title:"新しいタブ",url:"",history:[],pos:-1});
+ activeTab=browserTabs.length-1;renderTabs();showBrowserPage();
+}
+function closeTab(i){
+ if(browserTabs.length===1){browserTabs[0]={title:"新しいタブ",url:"",history:[],pos:-1};renderTabs();showBrowserPage();return}
+ browserTabs.splice(i,1);if(activeTab>=browserTabs.length)activeTab=browserTabs.length-1;
+ renderTabs();showBrowserPage();
+}
+function browserGo(){
+ let value=$("browserUrl").value.trim();if(!value)return;
+ let url;
+ if(value.includes(".")&&!value.includes(" ")&&!value.startsWith("http")){
+  url="https://"+value;
+ }else if(value.startsWith("http://")||value.startsWith("https://")){
+  url=value;
+ }else{
+  url="https://www.google.com/search?q="+encodeURIComponent(value);
+ }
+ let t=browserTabs[activeTab];
+ t.history=t.history.slice(0,t.pos+1);t.history.push(url);t.pos++;
+ t.url=url;t.title=url;
+ renderTabs();showBrowserPage();
+}
+function showBrowserPage(){
+ let t=browserTabs[activeTab];
+ let cont=$("browserContent");
+ if(!cont)return;
+ if(!t.url){
+  cont.innerHTML=`<div style="padding:40px;text-align:center;color:#333">
+  <div style="font-size:55px">🌐</div><h2>Microsoft Edge</h2>
+  <input id="newSearch" placeholder="検索または URL を入力" style="width:min(500px,90%);padding:14px;border-radius:30px;border:1px solid #ddd">
+  <button onclick="document.getElementById('browserUrl').value=document.getElementById('newSearch').value;browserGo()">検索</button>
+  </div>`;
+  $("newSearch").onkeydown=e=>{if(e.key==="Enter"){ $("browserUrl").value=e.target.value;browserGo()}};
+  return;
+ }
+ cont.innerHTML=`<iframe src="${escapeHtml(t.url)}" referrerpolicy="no-referrer"></iframe>`;
+}
+function browserBack(){
+ let t=browserTabs[activeTab];if(t.pos>0){t.pos--;t.url=t.history[t.pos];renderTabs();showBrowserPage()}
+}
+function browserForward(){
+ let t=browserTabs[activeTab];if(t.pos<t.history.length-1){t.pos++;t.url=t.history[t.pos];renderTabs();showBrowserPage()}
+}
+function browserReload(){showBrowserPage()}
+function browserHome(){browserTabs[activeTab].url="";renderTabs();showBrowserPage()}
+
+function renderStore(b){
+ b.innerHTML=`<h2>🛍️ アプリストア</h2>
+ <input id="storeSearch" placeholder="アプリを検索..." oninput="storeFilter()" style="width:100%;margin-bottom:12px">
+ <div id="storeGrid" class="appGrid"></div>`;
+ storeFilter();
+}
+function storeFilter(){
+ let q=$("storeSearch")?.value.toLowerCase()||"";
+ let grid=$("storeGrid");if(!grid)return;
+ grid.innerHTML="";
+ Object.keys(storeApps).filter(id=>storeApps[id].name.toLowerCase().includes(q)).forEach(id=>{
+ let a=storeApps[id],installed=settings.installed.includes(id);
+ let card=document.createElement("div");card.className="appCard";
+ card.innerHTML=`<div class="emoji">${a.icon}</div><b>${a.name}</b><p>${a.desc}</p><button>${installed?"インストール済み":"インストール"}</button>`;
+ card.querySelector("button").onclick=()=>{
+  if(installed){toast("このアプリはインストール済みです");return}
+  settings.installed.push(id);saveSettings();renderIcons();renderStart();storeFilter();toast(a.name+" をインストールしました");
+ };
+ grid.appendChild(card);
+ });
+}
+function renderSettings(b){
+ b.innerHTML=`<h2>⚙️ 設定</h2>
+ <div class="settingsNav">
+ <button onclick="settingsPage('personal')">個人設定</button>
+ <button onclick="settingsPage('cursor')">カーソル</button>
+ <button onclick="settingsPage('wallpaper')">壁紙</button>
+ <button onclick="settingsPage('system')">システム</button>
+ </div><div id="settingsPage"></div>`;
+ settingsPage("personal");
+}
+function settingsPage(page){
+ let p=$("settingsPage");if(!p)return;
+ if(page==="personal"){
+ p.innerHTML=`<h3>ユーザー設定</h3>
+ <p>ユーザー名</p><input id="userName" value="${escapeHtml(settings.name)}">
+ <button onclick="settings.name=document.getElementById('userName').value;saveSettings();document.getElementById('loginName').textContent=settings.name;toast('名前を変更しました')">保存</button>
+ <p>アクセントカラー</p><input type="color" value="${settings.accent}" id="accent">
+ <button onclick="settings.accent=document.getElementById('accent').value;saveSettings();applySettings()">適用</button>`;
+ }
+ if(page==="cursor"){
+ p.innerHTML=`<h3>マウスカーソル設定</h3>
+ <p>画像を選ぶと、デスクトップ内でカーソルが変更されます。</p>
+ <button onclick="document.getElementById('cursorUpload').click()">🖼️ カーソル画像を選択</button>
+ <button onclick="settings.cursor=null;saveSettings();applySettings();toast('標準カーソルに戻しました')">標準カーソルに戻す</button>
+ <p>※この設定はWeb Windows内だけに適用されます。Chromebook本体のカーソルは変わりません。</p>`;
+ }
+ if(page==="wallpaper"){
+ p.innerHTML=`<h3>壁紙</h3>
+ <div style="display:flex;flex-wrap:wrap;gap:10px">
+ <button onclick="setWallpaper('linear-gradient(135deg,#12365e,#315b95,#16294a)')">青</button>
+ <button onclick="setWallpaper('linear-gradient(135deg,#35234c,#9b4b92,#e38bb7)')">紫・ピンク</button>
+ <button onclick="setWallpaper('linear-gradient(135deg,#064e3b,#10b981,#134e4a)')">緑</button>
+ <button onclick="setWallpaper('linear-gradient(135deg,#7c2d12,#ea580c,#fbbf24)')">オレンジ</button>
+ <button onclick="setWallpaper('linear-gradient(135deg,#111827,#374151,#6b7280)')">グレー</button>
+ </div>
+ <p>画像を使う</p><input type="file" accept="image/*" onchange="wallpaperUpload(this)">`;
+ }
+ if(page==="system"){
+ p.innerHTML=`<h3>システム</h3>
+ <p>Web Windows 1.0</p>
+ <button onclick="if(confirm('設定を初期化する？')){localStorage.clear();location.reload()}">設定をリセット</button>
+ <p>アプリのインストール状態・壁紙などはブラウザ内に保存されます。</p>`;
+ }
+}
+function setWallpaper(v){settings.wallpaper=v;saveSettings();applySettings()}
+function wallpaperUpload(input){
+ let f=input.files[0];if(!f)return;
+ if(f.size>2000000){toast("画像は2MB以下にしてください");return}
+ let r=new FileReader();r.onload=()=>{settings.wallpaper=`url("${r.result}")`;saveSettings();applySettings();toast("壁紙を変更しました")};r.readAsDataURL(f);
+}
+function renderFiles(b){
+ b.innerHTML=`<h2>📁 ファイル</h2>
+ <input id="fileName" placeholder="ファイル名">
+ <button onclick="addFile()">＋ 新しいファイル</button>
+ <div id="fileList"></div>`;
+ showFiles();
+}
+function addFile(){
+ let name=$("fileName").value.trim();if(!name)return;
+ files.push({name,content:""});storage("wwFiles",files);showFiles();
+}
+function showFiles(){
+ let list=$("fileList");if(!list)return;
+ list.innerHTML=files.map((f,i)=>`<div style="padding:8px;border-bottom:1px solid #ffffff20">
+ 📄 ${escapeHtml(f.name)}
+ <button onclick="editFile(${i})">開く</button>
+ <button onclick="deleteFile(${i})">削除</button></div>`).join("");
+}
+function editFile(i){
+ let content=prompt("ファイル内容を編集",files[i].content);
+ if(content!==null){files[i].content=content;storage("wwFiles",files);showFiles()}
+}
+function deleteFile(i){files.splice(i,1);storage("wwFiles",files);showFiles()}
+function renderPaint(b){
+ b.innerHTML=`<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+ <input type="color" id="paintColor" value="#000000">
+ <input type="range" id="paintSize" min="1" max="40" value="5">
+ <button onclick="clearCanvas()">消去</button>
+ <button onclick="savePaint()">保存</button>
+ </div><canvas id="paintCanvas" style="width:100%;height:85%;background:white;touch-action:none;border-radius:8px"></canvas>`;
+ setTimeout(setupPaint,50);
+}
+let drawing=false;
+function setupPaint(){
+ let c=$("paintCanvas");if(!c)return;
+ c.width=c.clientWidth*devicePixelRatio;c.height=c.clientHeight*devicePixelRatio;
+ let ctx=c.getContext("2d");ctx.scale(devicePixelRatio,devicePixelRatio);
+ c.onpointerdown=e=>{drawing=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY)};
+ c.onpointermove=e=>{if(!drawing)return;ctx.strokeStyle=$("paintColor").value;ctx.lineWidth=$("paintSize").value;ctx.lineCap="round";ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke()};
+ c.onpointerup=()=>drawing=false;c.onpointerleave=()=>drawing=false;
+}
+function clearCanvas(){let c=$("paintCanvas");if(c)c.getContext("2d").clearRect(0,0,c.width,c.height)}
+function savePaint(){let c=$("paintCanvas");if(!c)return;let a=document.createElement("a");a.download="paint.png";a.href=c.toDataURL();a.click()}
+function clockApp(b){
+ let x=b.querySelector("#appClock");
+ function tick(){if(x)x.textContent=new Date().toLocaleTimeString("ja-JP")}
+ tick();setInterval(tick,1000);
+}
+let sw=0,swTimer=null;
+function startStopwatch(btn){
+ if(swTimer){clearInterval(swTimer);swTimer=null;btn.textContent="▶ 再開"}
+ else{swTimer=setInterval(()=>{sw++;let el=$("stopwatch");if(el)el.textContent=sw+"秒"},1000);btn.textContent="⏸ 停止"}
+}
+function showPhoto(input){
+ let f=input.files[0];if(!f)return;
+ let url=URL.createObjectURL(f);
+ $("photoView").innerHTML=`<img src="${url}" style="max-width:100%;max-height:350px">`;
+}
+function guessGame(){
+ let n=Number($("guess").value);
+ if(n===gameNumber)$("gameResult").textContent="🎉 正解！";
+ else if(n<gameNumber)$("gameResult").textContent="もっと大きい！";
+ else $("gameResult").textContent="もっと小さい！";
+}
+init();
+</script>
+</body>
+</html>
